@@ -5,12 +5,12 @@ int main(int argc, char** argv)
 	if (argc != 2)
 	{
 		std::cerr << "Error: Invalid argument count. Usage: ./btc input.txt" << std::endl;
+		return 1;
 	}
 
 	try {
 		BitcoinExchange btcExchange;
-		//execute function.
-		(void)argv;
+		btcExchange.execute(argv);
 	}
 	catch (BitcoinExchange::BadInput& e)
 	{

@@ -11,7 +11,7 @@
 
 class BitcoinExchange {
 private:
-	std::map<std::string, double> _dataMap;
+	std::map<int, double> _dataMap;
 public:
 	/* Constructors & Destructors */
 	BitcoinExchange();
@@ -26,9 +26,11 @@ public:
 	BitcoinExchange& operator=(BitcoinExchange&& src);
 
 	/* Getters & Setters */
-	void execute(std::string& input);
-	void validateKey(std::string& key);
-	void validateValue(std::string& value);
+	void readDataCsv(std::ifstream& in);
+	void execute(char** argv);
+	double calc(int date, double amount);
+	int validateKey(std::string& key);
+	double validateValue(std::string& value);
 	class CantOpenData : public std::exception
 	{
 	public:
@@ -44,10 +46,12 @@ public:
 	public:
 		const char* what() const noexcept override;
 	};
-	class BadInput : public std::exception
+	class BadInput : public std::runtime_error
 	{
 	public:
-		const char* what() const noexcept override;
+		BadInput(const std::string& msg)
+			: std::runtime_error(msg) {};
+		// const char* what() const noexcept override;
 	};
 	class TooLargeANumber : public std::exception
 	{

@@ -8,36 +8,7 @@ BitcoinExchange::BitcoinExchange()
 	{
 		throw BitcoinExchange::CantOpenData();
 	}
-
-	std::string captions;
-	getline(in, captions);
-	std::string key;
-	std::string value;
-	while (!in.eof())
-	{
-		getline(in, key, ',');
-		validateKey(key);
-		getline(in, value);
-		//validateValue(value);
-		//transform to double
-		_dataMap.emplace(key, std::stod(value));
-		std::cout << key << "\n" << std::endl;
-	}
-	for (auto it = _dataMap.begin(); it != _dataMap.end(); it++)
-	{
-		std::cout << it->first << it->second << "\n" << std::endl;
-	}
-	// std::string key, value;
-
-	// while (std::getline(in, key, ',') && std::getline(in, value))
-	// {
-	// 	_dataMap.emplace(key, value);
-	// }
-
-	// for (const auto& it : _dataMap)
-	// {
-	// 	std::cout << it.first << " " << it.second << "\n";
-	// }
+	readDataCsv(in);
 
 }
 
@@ -78,11 +49,6 @@ BitcoinExchange& BitcoinExchange::operator=(BitcoinExchange&& src)
 
 /* Getters & Setters */
 
-void BitcoinExchange::execute(std::string& input)
-{
-	(void)input;
-}
-
 bool is_number(const std::string& s)
 {
 	std::string::const_iterator it = s.begin();
@@ -93,34 +59,125 @@ bool is_number(const std::string& s)
 	return false;
 }
 
-void BitcoinExchange::validateKey(std::string& key)
+int BitcoinExchange::validateKey(std::string& key)
 {
 	std::stringstream ss(key);
 	int year, month, day;
-	std::string temp;
+	std::string temp, re;
+
 	getline(ss, temp, '-');
 	if (temp.length() != 4 || !is_number(temp))
-		throw BitcoinExchange::BadInput();
+		throw BitcoinExchange::BadInput(key);
 	year = std::stoi(temp);
+	re = temp;
+
 	getline(ss, temp, '-');
 	if (temp.length() != 2 || !is_number(temp))
-		throw BitcoinExchange::BadInput();
+		throw BitcoinExchange::BadInput(key);
 	month = std::stoi(temp);
+	re += temp;
+
 	getline(ss, temp);
 	if (temp.length() != 2 || !is_number(temp))
-		throw BitcoinExchange::BadInput();
+		throw BitcoinExchange::BadInput(key);
 	day = std::stoi(temp);
+	re += temp;
 
 	if (month < 1 || month > 12)
-		throw BitcoinExchange::BadInput();
+		throw BitcoinExchange::BadInput(key);
 	int daysPerMonth[12] = { 31, 28 ,31 ,30 ,31, 30, 31, 31, 30, 31, 30, 31 };
 	bool leap = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 	if (leap)
 		daysPerMonth[1] = 29;
 	if (day < 1 || day > daysPerMonth[month - 1])
-		throw BitcoinExchange::BadInput();
-
+		throw BitcoinExchange::BadInput(key);
+	return (stoi(re));
 }
+
+double  BitcoinExchange::validateValue(std::string& value)
+{
+	std::stringstream ss(value);
+	std::string temp;
+	double number;
+
+	if (value != "" && value[0] == '-')
+		throw NotAPositiveNumber(); //haaaa
+	getline(ss, temp, '.');
+	if (!is_number(temp))
+		throw BitcoinExchange::BadInput(value);
+	if (getline(ss, temp) && !is_number(temp))
+		throw BitcoinExchange::BadInput(value);
+	number = stod(value);
+	return (number);
+}
+
+void BitcoinExchange::readDataCsv(std::ifstream& in)
+{
+	std::string captions;
+	getline(in, captions);
+	std::string key;
+	std::string value;
+	int date;
+	double exchangeRate;
+	while (std::getline(in, key, ',') && std::getline(in, value))
+	{
+		date = validateKey(key);
+		exchangeRate = validateValue(value);
+		_dataMap.insert(std::pair(date, exchangeRate));
+	}
+}
+
+double BitcoinExchange::calc(int date, double amount)
+{
+	auto it = _dataMap.upper_bound(date);
+
+	if (it != _dataMap.begin())
+		--it;
+	else
+		it = _dataMap.begin();
+	return (it->second * amount);
+}
+
+
+void BitcoinExchange::execute(char** argv)
+{
+	std::ifstream in(argv[1]);
+	if (!in)
+	{
+		throw BitcoinExchange::CantOpenData();
+	}
+	std::string captions;
+	getline(in, captions);
+	std::string key, value, stick, line;
+	int date;
+	double amount;
+	while (std::getline(in, line))
+	{
+		try
+		{
+			std::stringstream ss(line);
+			std::getline(ss, key, ' ');
+			std::getline(ss, stick, ' ');
+			std::getline(ss, value);
+			date = validateKey(key);
+			if (stick != "|")
+				throw BitcoinExchange::BadInput(stick);
+			amount = validateValue(value);
+			if (amount > 1000)
+				throw BitcoinExchange::TooLargeANumber();
+			std::cout << key << " => " << value << " : " << calc(date, amount) << std::endl;
+		}
+		catch (BitcoinExchange::BadInput& e)
+		{
+			std::cerr << "Error: bad input => " << e.what() << std::endl;
+		}
+		catch (std::exception& e)
+		{
+			std::cerr << e.what() << std::endl;
+		}
+	}
+}
+
 
 
 const char* BitcoinExchange::CantOpenData::what() const noexcept
@@ -139,10 +196,10 @@ const char* BitcoinExchange::NotAPositiveNumber::what() const noexcept
 	return ("Error: not a positive number.");
 }
 
-const char* BitcoinExchange::BadInput::what() const noexcept
-{
-	return ("Error: bad input => ");
-}
+// const char* BitcoinExchange::BadInput::what() const noexcept
+// {
+// 	return ("Error: bad input => ");
+// }
 
 const char* BitcoinExchange::TooLargeANumber::what() const noexcept
 {
