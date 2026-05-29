@@ -46,14 +46,22 @@ public:
 	public:
 		const char* what() const noexcept override;
 	};
-	class BadInput : public std::runtime_error
+	class BadInput : public std::exception
 	{
+	private:
+		std::string msg;
 	public:
 		BadInput(const std::string& msg)
-			: std::runtime_error(msg) {};
-		// const char* what() const noexcept override;
+			: msg("Error: bad input => " + msg) {
+		};
+		const char* what() const noexcept override;
 	};
 	class TooLargeANumber : public std::exception
+	{
+	public:
+		const char* what() const noexcept override;
+	};
+	class BadColumns : public std::exception
 	{
 	public:
 		const char* what() const noexcept override;

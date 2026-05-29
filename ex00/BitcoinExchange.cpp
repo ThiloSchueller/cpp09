@@ -101,7 +101,7 @@ double  BitcoinExchange::validateValue(std::string& value)
 	double number;
 
 	if (value != "" && value[0] == '-')
-		throw NotAPositiveNumber(); //haaaa
+		throw NotAPositiveNumber();
 	getline(ss, temp, '.');
 	if (!is_number(temp))
 		throw BitcoinExchange::BadInput(value);
@@ -115,6 +115,8 @@ void BitcoinExchange::readDataCsv(std::ifstream& in)
 {
 	std::string captions;
 	getline(in, captions);
+	if (captions != "date,exchange_rate")
+		throw BitcoinExchange::BadColumns();
 	std::string key;
 	std::string value;
 	int date;
@@ -148,6 +150,8 @@ void BitcoinExchange::execute(char** argv)
 	}
 	std::string captions;
 	getline(in, captions);
+	if (captions != "date | value")
+		throw BitcoinExchange::BadColumns();
 	std::string key, value, stick, line;
 	int date;
 	double amount;
@@ -157,8 +161,10 @@ void BitcoinExchange::execute(char** argv)
 		{
 			std::stringstream ss(line);
 			std::getline(ss, key, ' ');
-			std::getline(ss, stick, ' ');
-			std::getline(ss, value);
+			if (!(std::getline(ss, stick, ' ')))
+				stick = "";
+			if (!(std::getline(ss, value)))
+				value = "";
 			date = validateKey(key);
 			if (stick != "|")
 				throw BitcoinExchange::BadInput(stick);
@@ -167,10 +173,6 @@ void BitcoinExchange::execute(char** argv)
 				throw BitcoinExchange::TooLargeANumber();
 			std::cout << key << " => " << value << " : " << calc(date, amount) << std::endl;
 		}
-		catch (BitcoinExchange::BadInput& e)
-		{
-			std::cerr << "Error: bad input => " << e.what() << std::endl;
-		}
 		catch (std::exception& e)
 		{
 			std::cerr << e.what() << std::endl;
@@ -178,13 +180,10 @@ void BitcoinExchange::execute(char** argv)
 	}
 }
 
-
-
 const char* BitcoinExchange::CantOpenData::what() const noexcept
 {
 	return ("Can't find or open data.csv");
 }
-
 
 const char* BitcoinExchange::CantOpenFile::what() const noexcept
 {
@@ -196,12 +195,17 @@ const char* BitcoinExchange::NotAPositiveNumber::what() const noexcept
 	return ("Error: not a positive number.");
 }
 
-// const char* BitcoinExchange::BadInput::what() const noexcept
-// {
-// 	return ("Error: bad input => ");
-// }
+const char* BitcoinExchange::BadInput::what() const noexcept
+{
+	return (msg.c_str());
+}
 
 const char* BitcoinExchange::TooLargeANumber::what() const noexcept
 {
 	return ("Error: too large a number");
+}
+
+const char* BitcoinExchange::BadColumns::what() const noexcept
+{
+	return ("Error: unexpected first line for column labeling");
 }
