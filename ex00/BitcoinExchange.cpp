@@ -12,16 +12,6 @@ BitcoinExchange::BitcoinExchange()
 
 }
 
-BitcoinExchange::BitcoinExchange(const BitcoinExchange& src)
-{
-	(void)src;
-}
-
-BitcoinExchange::BitcoinExchange(BitcoinExchange&& src)
-{
-	(void)src;
-}
-
 BitcoinExchange::~BitcoinExchange()
 {
 }
@@ -29,23 +19,6 @@ BitcoinExchange::~BitcoinExchange()
 /* Member Functions */
 
 /* Basic Operators */
-BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& src)
-{
-	if (this != &src)
-	{
-
-	}
-	return *this;
-}
-
-BitcoinExchange& BitcoinExchange::operator=(BitcoinExchange&& src)
-{
-	if (this != &src)
-	{
-
-	}
-	return *this;
-}
 
 /* Getters & Setters */
 

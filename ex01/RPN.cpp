@@ -8,33 +8,19 @@ RPN::RPN(std::string& term)
 	std::stringstream args(term);
 	while (getline(args, line, ' '))
 	{
+		if (line.empty())
+			continue;
 		if (line.length() != 1)
 			throw RpnError();
-		c = line.at(0);
-		validateChar(c);
-		_term.push_back(c);
+		c = line[0];
+		if (std::isdigit(c))
+			_term.push(c - '0');
+		else
+			calc(c);
 	}
-
-	for (char c : _term)
-	{
-		std::cout << c << " ";
-	}
-
-}
-
-
-RPN::RPN()
-{
-}
-
-RPN::RPN(const RPN& src)
-{
-	(void)src;
-}
-
-RPN::RPN(RPN&& src)
-{
-	(void)src;
+	if (_term.size() != 1)
+		throw RpnError();
+	std::cout << _term.top() << std::endl;
 }
 
 RPN::~RPN()
@@ -44,23 +30,6 @@ RPN::~RPN()
 /* Member Functions */
 
 /* Basic Operators */
-RPN& RPN::operator=(const RPN& src)
-{
-	if (this != &src)
-	{
-
-	}
-	return *this;
-}
-
-RPN& RPN::operator=(RPN&& src)
-{
-	if (this != &src)
-	{
-
-	}
-	return *this;
-}
 
 /* Getters & Setters */
 const char* RPN::RpnError::what() const noexcept
@@ -68,8 +37,40 @@ const char* RPN::RpnError::what() const noexcept
 	return ("Error");
 }
 
-void RPN::validateChar(char c)
+const char* RPN::DivisionByZeroError::what() const noexcept
 {
-	if (!((std::isdigit(c)) || c == '+' || c == '-' || c == '*' || c == '/'))
+	return ("Error: Division by Zero");
+}
+
+void RPN::calc(char c)
+{
+	if (_term.empty())
 		throw RpnError();
+	int a = _term.top();
+	_term.pop();
+
+	if (_term.empty())
+		throw RpnError();
+	int b = _term.top();
+	_term.pop();
+
+	switch (c)
+	{
+		case ('+'):
+			_term.push(b + a);
+			break;
+		case ('-'):
+			_term.push(b - a);
+			break;
+		case ('/'):
+			if (a == 0)
+				throw DivisionByZeroError();
+			_term.push(b / a);
+			break;
+		case ('*'):
+			_term.push(b * a);
+			break;
+		default:
+			throw RpnError();
+	}
 }

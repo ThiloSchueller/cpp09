@@ -15,15 +15,15 @@ private:
 public:
 	/* Constructors & Destructors */
 	BitcoinExchange();
-	BitcoinExchange(const BitcoinExchange& src);
-	BitcoinExchange(BitcoinExchange&& src);
+	BitcoinExchange(const BitcoinExchange& src) = delete;
+	BitcoinExchange(BitcoinExchange&& src) = delete;
 	~BitcoinExchange();
 
 	/* Member Functions */
 
 	/* Basic Operators */
-	BitcoinExchange& operator=(const BitcoinExchange& src);
-	BitcoinExchange& operator=(BitcoinExchange&& src);
+	BitcoinExchange& operator=(const BitcoinExchange& src) = delete;
+	BitcoinExchange& operator=(BitcoinExchange&& src) = delete;
 
 	/* Getters & Setters */
 	void readDataCsv(std::ifstream& in);

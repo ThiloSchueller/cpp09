@@ -13,21 +13,26 @@ private:
 	std::stack<int, std::list<int>> _term;
 public:
 	/* Constructors & Destructors */
-	RPN();
+	RPN() = delete;
 	RPN(std::string& term);
-	RPN(const RPN& src);
-	RPN(RPN&& src);
+	RPN(const RPN& src) = delete;
+	RPN(RPN&& src) = delete;
 	~RPN();
 
 	/* Member Functions */
 
 	/* Basic Operators */
-	RPN& operator=(const RPN& src);
-	RPN& operator=(RPN&& src);
+	RPN& operator=(const RPN& src) = delete;
+	RPN& operator=(RPN&& src) = delete;
 
 	/* Getters & Setters */
-	void validateChar(char c);
+	void calc(char c);
 	class RpnError : public std::exception
+	{
+	public:
+		const char* what() const noexcept override;
+	};
+	class DivisionByZeroError : public std::exception
 	{
 	public:
 		const char* what() const noexcept override;
