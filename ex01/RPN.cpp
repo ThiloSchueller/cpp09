@@ -5,11 +5,9 @@ RPN::RPN(std::string& term)
 {
 	char c;
 	std::string line;
-	std::stringstream args(term);
-	while (getline(args, line, ' '))
+	std::istringstream args(term);
+	while (args >> line)
 	{
-		if (line.empty())
-			continue;
 		if (line.length() != 1)
 			throw RpnError();
 		c = line[0];

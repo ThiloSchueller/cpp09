@@ -1,46 +1,36 @@
 #include "PmergeMe.hpp"
 
 /* Constructors & Destructors */
-PmergeMe::PmergeMe()
+auto print = [](const int& n) { std::cout << ' ' << n; };
+
+PmergeMe::PmergeMe(int argc, char** argv)
 {
+	for (int i = 1; i < argc; i++)
+	{
+		_v.push_back(std::make_pair(std::stoi(argv[i]), 0));
+	}
+	sort_v(_v.size());
+	std::for_each(_v.begin(), _v.end(), [](const int& n) { std::cout << ' ' << n; }); //overload << ?
 }
 
-PmergeMe::PmergeMe(char** argv)
+void PmergeMe::sort_v(int n)
 {
-	(void)argv;
+	for (int i = 0; i + 1 < n; i = i + 2)
+	{
+		if (_v[i].first > _v[i + 1].first)
+			std::swap(_v[i], _v[i + 1]);
+		_v[i].second = i + 1;
+		_v[i + 1].second = i + 1;
+	}
 }
 
-PmergeMe::PmergeMe(const PmergeMe& src)
+int jakobstahl(int k)
 {
-}
-
-PmergeMe::PmergeMe(PmergeMe&& src)
-{
+	int arr[] = { 1, 1, 3, 5, 11, 21, 43, 85 };
+	return arr[k];
 }
 
 PmergeMe::~PmergeMe()
 {
 }
 
-/* Member Functions */
-
-/* Basic Operators */
-PmergeMe& PmergeMe::operator=(const PmergeMe& src)
-{
-	if (this != &src)
-	{
-
-	}
-	return *this;
-}
-
-PmergeMe& PmergeMe::operator=(PmergeMe&& src)
-{
-	if (this != &src)
-	{
-
-	}
-	return *this;
-}
-
-/* Getters & Setters */
