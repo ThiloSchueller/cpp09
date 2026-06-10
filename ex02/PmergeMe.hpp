@@ -5,11 +5,14 @@
 #include <deque>
 #include <iostream>
 #include <algorithm>
+#include <cmath>
+#include "Node.hpp"
 
 class PmergeMe {
 private:
-	std::vector<std::pair<int, int>> _v;
+	std::vector<Node> _v;
 	std::deque<int> _d;
+	int	_n;
 public:
 	/* Constructors & Destructors */
 	PmergeMe() = delete;
@@ -27,7 +30,11 @@ public:
 	PmergeMe& operator=(PmergeMe&& src) = delete;
 
 	/* Getters & Setters */
-
+	int getNumberOfComparison() const;
+	int getNodeValue(int i) const;
+	int getSize() const;
 };
+
+std::ostream& operator<<(std::ostream& o, const PmergeMe& src);
 
 #endif // PMERGEME_HPP
