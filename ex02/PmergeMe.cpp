@@ -8,31 +8,164 @@ PmergeMe::PmergeMe(int argc, char** argv)
 	for (int i = 1; i < argc; i++)
 	{
 		_v.push_back(Node(argv[i]));
+		_v[i - 1].unique_index = i;
 	}
+	// for (int i = 1; i < argc; i++)
+	// {
+	// 	_v.push_back(Node(argv[i]));
+	// 	_v.back().unique_index = i;
+	// }
+	std::cout << "read the following numbers: \n" << *this << std::endl;
+	_v = sort_v(_v);
+	std::cout << "sorted :\n" << *this << std::endl;
 }
 
-void PmergeMe::sort_v(int n, )
+std::vector<Node> PmergeMe::sort_v(std::vector<Node> v)
 {
-	std::vector<Node> nv;
-	for (int i = 0; i < n; i = i++)
+	std::vector<Node> av;
+	std::vector<Node> bv;
+	std::vector<Node> nbv;
+	std::vector<Node> nav;
+	std::vector<Node> mav;
+
+	if (v.size() == 1)
 	{
-		if (_v[i] < _v[i + 1])
+		return (v);
+	}
+	// sort v into av and bv 	// save in a the corresponding b;
+	for (size_t i = 0; i < v.size() - 1; i = i + 2)
+	{
+		_n++;
+		if (v[i] < v[i + 1])
 		{
-			_v[i].ANode = &_v[i + 1];
-			std::swap()
+			av.push_back(v[i + 1]);
+			bv.push_back(v[i]);
+			//av[i].index_where_to_find_underlying_b = i;
 		}
 		else
 		{
-			_v[i + 1].ANode = &_v[i];
+			av.push_back(v[i]);
+			bv.push_back(v[i + 1]);
+			//av[i].index_where_to_find_underlying_b = i;
 		}
-		_n++;
+		av.back().index_where_to_find_underlying_b = av.size() - 1;
+		if (i == v.size() - 3)
+		{
+			bv.push_back(v[i + 2]);
+		}
 	}
+	// std::cout << "av: ";
+	// for (size_t i = 0; i < av.size(); i++)
+	// 	std::cout << av[i].value << " ";
+	// std::cout << std::endl;
+	// std::cout << "bv: ";
+	// for (size_t i = 0; i < bv.size(); i++)
+	// 	std::cout << bv[i].value << " ";
+	// std::cout << std::endl;
+
+
+	// get a sorted a back;
+	nav = sort_v(av);
+
+	// mirror to not lose b data
+	mav.resize(av.size());
+	for (size_t i = 0; i < nav.size(); i++)
+	{
+		int x = 0;
+		for (size_t j = 0; j < av.size(); j++)
+		{
+			if (nav[i].unique_index == av[j].unique_index)
+			{
+				x = j;
+				//std::cout << "first b " << nav[i].index_where_to_find_underlying_b << " second b " << av[j].index_where_to_find_underlying_b << std::endl;
+				break;
+			}
+		}
+		mav[i] = av[x];
+	}
+
+	// sort b by ordering with the information and the acutal index of a in v;
+	nbv.resize(bv.size());
+	for (size_t i = 0; i < mav.size(); i++)
+	{
+		nbv[i] = bv[mav[i].index_where_to_find_underlying_b];
+	}
+	if (bv.size() > mav.size())
+	{
+		nbv[bv.size() - 1] = bv[bv.size() - 1];
+	}
+
+	std::cout << "av: ";
+	for (size_t i = 0; i < av.size(); i++)
+		std::cout << av[i].value << " ";
+	std::cout << std::endl;
+	std::cout << "nav: ";
+	for (size_t i = 0; i < nav.size(); i++)
+		std::cout << nav[i].value << " ";
+	std::cout << std::endl;
+	std::cout << "mav: ";
+	for (size_t i = 0; i < mav.size(); i++)
+		std::cout << mav[i].value << " ";
+	std::cout << std::endl;
+	std::cout << "bv: ";
+	for (size_t i = 0; i < bv.size(); i++)
+		std::cout << bv[i].value << " ";
+	std::cout << std::endl;
+	std::cout << "nbv: ";
+	for (size_t i = 0; i < bv.size(); i++)
+		std::cout << nbv[i].value << " ";
+	std::cout << std::endl;
+
+	// insert b following jakobsthalzahl into a;
+	// create main chain by adding smallest b
+	mav.insert(mav.begin(), nbv[0]);
+
+	// dummy version for early testing
+	for (size_t i = 1; i < nbv.size(); i++)
+	{
+		for (size_t j = 0; j < mav.size(); j++)
+		{
+			if ((nbv[i] < mav[j]))
+			{
+				mav.insert(mav.begin() + j, nbv[i]);
+				break;
+			}
+			if (j == mav.size() - 1)
+			{
+				mav.push_back(nbv[i]);
+				break;
+			}
+		}
+	}
+	return mav;
 }
 
 int PmergeMe::jakobstahl(int k)
 {
-	int arr[] = { 1, 1, 3, 5, 11, 21, 43, 85 };
-	return arr[k];
+	// for (int i = 0; i < k; i++)
+	// 	std::cout << ((pow(2, i + 1) + pow(-1, i)) / 3) << std::endl;
+	return ((pow(2, k + 1) + pow(-1, k)) / 3);
+
+
+	// int arr[] = { 1, 1, 3, 5, 11, 21, 43, 85 };
+	// return arr[k];
+}
+
+int PmergeMe::binarySearch(int high, int low, Node item, std::vector<Node>& v) const
+{
+	if (high <= low)
+		return high; //error here maybe
+	int mid = (low + high) / 2;
+	// if (item == v[mid])
+	// 	return (low); do i need?
+	if (v[mid] < item)
+	{
+		return (binarySearch(mid + 1, high, item, v));
+	}
+	else
+	{
+		return (binarySearch(low, mid - 1, item, v));
+	}
 }
 
 PmergeMe::~PmergeMe()

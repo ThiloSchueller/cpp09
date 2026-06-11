@@ -22,8 +22,9 @@ public:
 	~PmergeMe();
 
 	/* Member Functions */
-	void sort_v(int n);
+	std::vector<Node> sort_v(std::vector<Node> v);
 	int jakobstahl(int k);
+	int binarySearch(int high, int low, Node item, std::vector<Node>& v) const;
 
 	/* Basic Operators */
 	PmergeMe& operator=(const PmergeMe& src) = delete;

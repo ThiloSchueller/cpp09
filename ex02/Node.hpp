@@ -9,22 +9,23 @@ private:
 
 public:
 	int value;
-	Node* ANode;
+	int index_where_to_find_underlying_b;
+	int unique_index;
+
 	/* Constructors & Destructors */
-	Node() = delete;
+	Node();
 	Node(char* src);
 	// void setANode(Node& ANode);
 	// Node& getANode();
-	Node(const Node& src); // TODO do i need those?
-	Node(Node&& src);
 	~Node();
 
 	/* Member Functions */
 
 	/* Basic Operators */
-	Node& operator=(const Node& src);
-	Node& operator=(Node&& src);
 	int operator<(const Node& other);
+	int operator==(const Node& other);
+	//int operator<(const Node& other);
+
 
 	/* Getters & Setters */
 
