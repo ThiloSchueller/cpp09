@@ -45,6 +45,7 @@ int main(int argc, char** argv)
 	PmergeMe obj(argc, argv);
 	std::cout << obj << std::endl;
 	std::cout << "Number of allowed comparisons " << F(argc - 1) << "\n"
-		<< "Number of   used  comparisons " << obj.getNumberOfComparison() << "\n" << std::endl;
+		<< "Number of   used  comparisons " << Node::getNumberOfComparisons() << "\n" << std::endl;
+	// << "Number of   used  comparisons " << obj.getNumberOfComparison() << "\n" << std::endl;
 	return 0;
 }

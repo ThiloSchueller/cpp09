@@ -3,13 +3,13 @@
 /* Constructors & Destructors */
 
 PmergeMe::PmergeMe(int argc, char** argv)
-	: _n(0)
 {
 	for (int i = 1; i < argc; i++)
 	{
 		_v.push_back(Node(argv[i]));
 		_v[i - 1].unique_index = i;
 	}
+	//_v[0]._number_of_comparisons = 0;
 	// for (int i = 1; i < argc; i++)
 	// {
 	// 	_v.push_back(Node(argv[i]));
@@ -35,7 +35,6 @@ std::vector<Node> PmergeMe::sort_v(std::vector<Node> v)
 	// sort v into av and bv 	// save in a the corresponding b;
 	for (size_t i = 0; i < v.size() - 1; i = i + 2)
 	{
-		_n++;
 		if (v[i] < v[i + 1])
 		{
 			av.push_back(v[i + 1]);
@@ -97,47 +96,88 @@ std::vector<Node> PmergeMe::sort_v(std::vector<Node> v)
 
 	std::cout << "av: ";
 	for (size_t i = 0; i < av.size(); i++)
-		std::cout << av[i].value << " ";
+		std::cout << av[i] << " ";
 	std::cout << std::endl;
 	std::cout << "nav: ";
 	for (size_t i = 0; i < nav.size(); i++)
-		std::cout << nav[i].value << " ";
+		std::cout << nav[i] << " ";
 	std::cout << std::endl;
 	std::cout << "mav: ";
 	for (size_t i = 0; i < mav.size(); i++)
-		std::cout << mav[i].value << " ";
+		std::cout << mav[i] << " ";
 	std::cout << std::endl;
 	std::cout << "bv: ";
 	for (size_t i = 0; i < bv.size(); i++)
-		std::cout << bv[i].value << " ";
+		std::cout << bv[i] << " ";
 	std::cout << std::endl;
 	std::cout << "nbv: ";
 	for (size_t i = 0; i < bv.size(); i++)
-		std::cout << nbv[i].value << " ";
+		std::cout << nbv[i] << " ";
 	std::cout << std::endl;
 
 	// insert b following jakobsthalzahl into a;
 	// create main chain by adding smallest b
-	mav.insert(mav.begin(), nbv[0]);
 
 	// dummy version for early testing
+	// mav.insert(mav.begin(), nbv[0]);
+	// for (size_t i = 1; i < nbv.size(); i++)
+	// {
+	// 	for (size_t j = 0; j < mav.size(); j++)
+	// 	{
+	// 		if ((nbv[i] < mav[j]))
+	// 		{
+	// 			mav.insert(mav.begin() + j, nbv[i]);
+	// 			break;
+	// 		}
+	// 		if (j == mav.size() - 1)
+	// 		{
+	// 			mav.push_back(nbv[i]);
+	// 			break;
+	// 		}
+	// 	}
+	// }
+
+	// dummy version that uses binary search but not Jakosthal;
+	// mav.insert(mav.begin(), nbv[0]);
+	// for (size_t i = 1; i < nbv.size(); i++)
+	// {
+	// 	mav.insert(mav.begin() + binarySearch(0, mav.size() - 1, nbv[i], mav), nbv[i]);
+	// }
+	// real version
+	mav.insert(mav.begin(), nbv[0]);
+	int k = 2;
+	int jakob = jakobstahl(k);
+	//std::cout << "this :" << jakob << std::endl;
 	for (size_t i = 1; i < nbv.size(); i++)
 	{
-		for (size_t j = 0; j < mav.size(); j++)
+		std::cout << "jakob :" << jakob;
+		std::cout << " upper bound :" << i + jakob - 2;
+		std::cout << " nbv[] " << nbv[jakob - 1] << std::endl;
+		mav.insert(mav.begin() + binarySearch(0, i + jakob - 2, nbv[jakob - 1], mav), nbv[jakob - 1]);
+		--jakob;
+		if (jakob == jakobstahl(k - 1))
 		{
-			if ((nbv[i] < mav[j]))
-			{
-				mav.insert(mav.begin() + j, nbv[i]);
-				break;
-			}
-			if (j == mav.size() - 1)
-			{
-				mav.push_back(nbv[i]);
-				break;
-			}
+			jakob = jakobstahl(++k);
+			if (jakob > static_cast<int>(nbv.size()))
+				jakob = static_cast<int>(nbv.size());
 		}
 	}
 	return mav;
+}
+
+int PmergeMe::binarySearch(int low, int high, Node& item, std::vector<Node>& v) const
+{
+	if (low > high)
+		return low; // TODO: can this pass an idex that is out of bounds for the vector
+	int mid = (low + high) / 2;
+	if (v[mid] < item)
+	{
+		return (binarySearch(mid + 1, high, item, v));
+	}
+	else
+	{
+		return (binarySearch(low, mid - 1, item, v));
+	}
 }
 
 int PmergeMe::jakobstahl(int k)
@@ -151,35 +191,23 @@ int PmergeMe::jakobstahl(int k)
 	// return arr[k];
 }
 
-int PmergeMe::binarySearch(int high, int low, Node item, std::vector<Node>& v) const
-{
-	if (high <= low)
-		return high; //error here maybe
-	int mid = (low + high) / 2;
-	// if (item == v[mid])
-	// 	return (low); do i need?
-	if (v[mid] < item)
-	{
-		return (binarySearch(mid + 1, high, item, v));
-	}
-	else
-	{
-		return (binarySearch(low, mid - 1, item, v));
-	}
-}
-
 PmergeMe::~PmergeMe()
 {
 }
 
-int PmergeMe::getNumberOfComparison() const
-{
-	return (_n);
-}
+// int PmergeMe::getNumberOfComparison() const
+// {
+// 	return (_n);
+// }
 
-int PmergeMe::getNodeValue(int i) const
+// int PmergeMe::getNodeValue(int i) const
+// {
+// 	return(_v[i].value);
+// }
+
+const Node& PmergeMe::getNode(int i) const
 {
-	return(_v[i].value);
+	return (_v[i]);
 }
 
 int PmergeMe::getSize() const
@@ -191,7 +219,8 @@ std::ostream& operator<<(std::ostream& o, const PmergeMe& src)
 {
 	for (int i = 0; i < src.getSize(); i++)
 	{
-		o << src.getNodeValue(i) << " ";
+		// o << src.getNodeValue(i) << " ";
+		o << src.getNode(i) << " ";
 	}
 	o << std::endl;
 	return (o);

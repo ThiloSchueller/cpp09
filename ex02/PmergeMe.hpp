@@ -12,7 +12,6 @@ class PmergeMe {
 private:
 	std::vector<Node> _v;
 	std::deque<int> _d;
-	int	_n;
 public:
 	/* Constructors & Destructors */
 	PmergeMe() = delete;
@@ -24,7 +23,7 @@ public:
 	/* Member Functions */
 	std::vector<Node> sort_v(std::vector<Node> v);
 	int jakobstahl(int k);
-	int binarySearch(int high, int low, Node item, std::vector<Node>& v) const;
+	int binarySearch(int low, int high, Node& item, std::vector<Node>& v) const;
 
 	/* Basic Operators */
 	PmergeMe& operator=(const PmergeMe& src) = delete;
@@ -33,6 +32,7 @@ public:
 	/* Getters & Setters */
 	int getNumberOfComparison() const;
 	int getNodeValue(int i) const;
+	const Node& getNode(int i) const;
 	int getSize() const;
 };
 
