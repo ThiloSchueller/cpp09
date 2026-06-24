@@ -7,11 +7,12 @@
 #include <algorithm>
 #include <cmath>
 #include "Node.hpp"
+#include <chrono>
 
 class PmergeMe {
 private:
 	std::vector<Node> _v;
-	std::deque<int> _d;
+	std::deque<Node> _d;
 public:
 	/* Constructors & Destructors */
 	PmergeMe() = delete;
@@ -21,19 +22,21 @@ public:
 	~PmergeMe();
 
 	/* Member Functions */
-	std::vector<Node> sort_v(std::vector<Node> v);
-	int jakobstahl(int k);
-	int binarySearch(int low, int high, Node& item, std::vector<Node>& v) const;
+	std::vector<Node> sort_v(const std::vector<Node>& v) const;
+	std::deque<Node> sort_d(const std::deque<Node>& d) const;
+	int jakobstahl(int k) const;
+	int binarySearch_v(int low, int high, Node& item, std::vector<Node>& v) const;
+	int binarySearch_d(int low, int high, Node& item, std::deque<Node>& d) const;
 
 	/* Basic Operators */
 	PmergeMe& operator=(const PmergeMe& src) = delete;
 	PmergeMe& operator=(PmergeMe&& src) = delete;
 
 	/* Getters & Setters */
-	int getNumberOfComparison() const;
-	int getNodeValue(int i) const;
-	const Node& getNode(int i) const;
-	int getSize() const;
+	const Node& getNode_v(int i) const;
+	const Node& getNode_d(int i) const;
+	int getSize_v() const;
+	int getSize_d() const;
 };
 
 std::ostream& operator<<(std::ostream& o, const PmergeMe& src);
