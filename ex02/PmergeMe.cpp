@@ -2,10 +2,22 @@
 
 /* Constructors & Destructors */
 
+static bool is_number(const std::string& s)
+{
+	std::string::const_iterator it = s.begin();
+	while (it != s.end() && std::isdigit(*it))
+		++it;
+	if (!s.empty() && it == s.end())
+		return true;
+	return false;
+}
+
 PmergeMe::PmergeMe(int argc, char** argv)
 {
 	for (int i = 1; i < argc; i++)
 	{
+		if (!is_number(argv[i]))
+			throw std::exception();
 		_v.push_back(Node(argv[i]));
 		_v[i - 1].unique_index = i;
 	}
@@ -21,9 +33,10 @@ PmergeMe::PmergeMe(int argc, char** argv)
 	std::chrono::steady_clock::time_point begin_d = std::chrono::steady_clock::now();
 	_d = sort_d(_d);
 	std::chrono::steady_clock::time_point end_d = std::chrono::steady_clock::now();
-	std::cout << "After : " << *this << std::endl;
+	std::cout << "After: " << *this << std::endl;
 	std::cout << "Time to process a range of " << _v.size() << " elements with std::vector : " << std::chrono::duration_cast<std::chrono::microseconds>(end_v - begin_v).count() << " [µs]" << std::endl;
 	std::cout << "Time to process a range of " << _d.size() << " elements with std::deque : " << std::chrono::duration_cast<std::chrono::microseconds>(end_d - begin_d).count() << " [µs]" << std::endl;
+	//std::cout << "Is sorted " << std::is_sorted(_v.cbegin(), _v.cend()) << std::endl;
 }
 
 std::vector<Node> PmergeMe::sort_v(const std::vector<Node>& v) const
@@ -115,7 +128,7 @@ std::vector<Node> PmergeMe::sort_v(const std::vector<Node>& v) const
 int PmergeMe::binarySearch_v(int low, int high, Node& item, std::vector<Node>& v) const
 {
 	if (low > high)
-		return low; // TODO: can this pass an idex that is out of bounds for the vector
+		return low;
 	int mid = (low + high) / 2;
 	if (v[mid] < item)
 	{
@@ -259,7 +272,7 @@ int PmergeMe::getSize_d() const
 int PmergeMe::binarySearch_d(int low, int high, Node& item, std::deque<Node>& d) const
 {
 	if (low > high)
-		return low; // TODO: can this pass an idex that is out of bounds for the vector
+		return low;
 	int mid = (low + high) / 2;
 	if (d[mid] < item)
 	{

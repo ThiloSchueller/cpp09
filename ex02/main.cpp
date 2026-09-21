@@ -13,9 +13,19 @@ int F(int n) // max number of max comparisons for n numbers
 int main(int argc, char** argv)
 {
 	if (argc == 1)
+	{
+		std::cerr << "Missing input" << std::endl;
 		return 1;
-	PmergeMe obj(argc, argv);
+	}
+	try
+	{
+		PmergeMe obj(argc, argv);
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "Error" << std::endl;
+	}
 	// std::cout << "Number of allowed comparisons " << F(argc - 1) << "\n"
-	// 	<< "Number of   used  comparisons " << Node::getNumberOfComparisons() << "\n" << std::endl;
+	// 	<< "Number of   used  comparisons " << Node::getNumberOfComparisons() / 2 << "\n" << std::endl;
 	return 0;
 }

@@ -18,23 +18,21 @@ public:
 	/* Constructors & Destructors */
 	Node();
 	Node(char* src);
-	// void setANode(Node& ANode);
-	// Node& getANode();
+	Node(const Node& src);
+	//Node(Node&& src) = delete;
 	~Node();
 
 	/* Member Functions */
 
 	/* Basic Operators */
 	bool operator<(const Node& other) const;
-	int operator==(const Node& other);
-	//int operator<(const Node& other);
-
+	Node& operator=(const Node& src);
 
 	/* Getters & Setters */
 	int getValue() const;
 	static int getNumberOfComparisons();
 };
 
-std::ostream& operator<<(std::ostream& o, const Node& src); //friend and no getValue would be nicer, but not allowed from subject;
+std::ostream& operator<<(std::ostream& o, const Node& src);
 
 #endif // NODE_HPP
