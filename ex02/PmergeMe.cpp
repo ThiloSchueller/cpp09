@@ -1,7 +1,5 @@
 #include "PmergeMe.hpp"
 
-/* Constructors & Destructors */
-
 static bool is_number(const std::string& s)
 {
 	std::string::const_iterator it = s.begin();
@@ -11,6 +9,8 @@ static bool is_number(const std::string& s)
 		return true;
 	return false;
 }
+
+/* Constructors & Destructors */
 
 PmergeMe::PmergeMe(int argc, char** argv)
 {
@@ -37,6 +37,7 @@ PmergeMe::PmergeMe(int argc, char** argv)
 	std::cout << "Time to process a range of " << _v.size() << " elements with std::vector : " << std::chrono::duration_cast<std::chrono::microseconds>(end_v - begin_v).count() << " [µs]" << std::endl;
 	std::cout << "Time to process a range of " << _d.size() << " elements with std::deque : " << std::chrono::duration_cast<std::chrono::microseconds>(end_d - begin_d).count() << " [µs]" << std::endl;
 	//std::cout << "Is sorted " << std::is_sorted(_v.cbegin(), _v.cend()) << std::endl;
+	//std::cout << "comparisons " << (Node::getNumberOfComparisons()) / 2 << std::endl;
 }
 
 std::vector<Node> PmergeMe::sort_v(const std::vector<Node>& v) const

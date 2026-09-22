@@ -9,7 +9,6 @@ BitcoinExchange::BitcoinExchange()
 		throw BitcoinExchange::CantOpenData();
 	}
 	readDataCsv(in);
-
 }
 
 BitcoinExchange::~BitcoinExchange()
@@ -22,7 +21,7 @@ BitcoinExchange::~BitcoinExchange()
 
 /* Getters & Setters */
 
-bool is_number(const std::string& s)
+static bool is_number(const std::string& s)
 {
 	std::string::const_iterator it = s.begin();
 	while (it != s.end() && std::isdigit(*it))
@@ -32,7 +31,7 @@ bool is_number(const std::string& s)
 	return false;
 }
 
-int BitcoinExchange::validateKey(std::string& key)
+int BitcoinExchange::validateKey(std::string& key) const
 {
 	std::stringstream ss(key);
 	int year, month, day;
@@ -67,7 +66,7 @@ int BitcoinExchange::validateKey(std::string& key)
 	return (stoi(re));
 }
 
-double  BitcoinExchange::validateValue(std::string& value)
+double  BitcoinExchange::validateValue(std::string& value) const
 {
 	std::stringstream ss(value);
 	std::string temp;
@@ -102,7 +101,7 @@ void BitcoinExchange::readDataCsv(std::ifstream& in)
 	}
 }
 
-double BitcoinExchange::calc(int date, double amount)
+double BitcoinExchange::calc(int date, double amount) const
 {
 	auto it = _dataMap.upper_bound(date);
 
@@ -114,7 +113,7 @@ double BitcoinExchange::calc(int date, double amount)
 }
 
 
-void BitcoinExchange::execute(char** argv)
+void BitcoinExchange::execute(char** argv) const
 {
 	std::ifstream in(argv[1]);
 	if (!in)
@@ -140,7 +139,7 @@ void BitcoinExchange::execute(char** argv)
 				value = "";
 			date = validateKey(key);
 			if (stick != "|")
-				throw BitcoinExchange::BadInput(stick);
+				throw BitcoinExchange::BadInput(line);
 			amount = validateValue(value);
 			if (amount > 1000)
 				throw BitcoinExchange::TooLargeANumber();

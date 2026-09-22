@@ -27,10 +27,10 @@ public:
 
 	/* Getters & Setters */
 	void readDataCsv(std::ifstream& in);
-	void execute(char** argv);
-	double calc(int date, double amount);
-	int validateKey(std::string& key);
-	double validateValue(std::string& value);
+	void execute(char** argv) const;
+	double calc(int date, double amount) const;
+	int validateKey(std::string& key) const;
+	double validateValue(std::string& value) const;
 	class CantOpenData : public std::exception
 	{
 	public:

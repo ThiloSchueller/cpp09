@@ -17,6 +17,11 @@ Node::Node(const Node& src)
 	*this = src;
 }
 
+Node::Node(Node&& src) noexcept
+{
+	*this = std::move(src);
+}
+
 Node::~Node()
 {
 }
@@ -31,6 +36,18 @@ Node& Node::operator=(const Node& src)
 	}
 	return *this;
 }
+
+Node& Node::operator=(Node&& src) noexcept
+{
+	if (this != &src)
+	{
+		this->_value = src._value;
+		this->index_where_to_find_underlying_b = src.index_where_to_find_underlying_b;
+		this->unique_index = src.unique_index;
+	}
+	return *this;
+}
+
 
 bool Node::operator<(const Node& other) const
 {

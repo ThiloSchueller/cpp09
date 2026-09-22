@@ -19,7 +19,7 @@ public:
 	Node();
 	Node(char* src);
 	Node(const Node& src);
-	//Node(Node&& src) = delete;
+	Node(Node&& src) noexcept;
 	~Node();
 
 	/* Member Functions */
@@ -27,6 +27,7 @@ public:
 	/* Basic Operators */
 	bool operator<(const Node& other) const;
 	Node& operator=(const Node& src);
+	Node& operator=(Node&& src) noexcept;
 
 	/* Getters & Setters */
 	int getValue() const;
